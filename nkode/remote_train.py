@@ -17,7 +17,7 @@ S3_BUCKET = 'jzq1xn-eks-ml-data'
 
 #NOTEBOOK_BASE_DIR = fairing.notebook.notebook_util.get_notebook_name()
 
-DATASET = 'data/train.csv'
+DATASET = 'data'
 REQUIREMENTS = 'requirements.txt'
 
 
