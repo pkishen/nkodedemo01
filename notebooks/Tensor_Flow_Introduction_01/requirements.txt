@@ -1,1 +1,2 @@
 numpy
+kubeflow-fairing==1.0.2

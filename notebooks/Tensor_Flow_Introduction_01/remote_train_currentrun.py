@@ -1,3 +1,15 @@
+import argparse
+
+parser = argparse.ArgumentParser(description='Example with non-optional arguments')
+
+parser.add_argument('method', action="store")
+parser.add_argument('dataDir', action="store")
+parser.add_argument('baseImage', action="store")
+args = parser.parse_args()
+method = args.method
+dataDir = args.dataDir
+baseImage = args.baseImage
+print (parser.parse_args())
 import os
 import sys
 import tensorflow as tf
@@ -68,15 +80,15 @@ from kubeflow.fairing.backends import KubeflowAWSBackend
 AWS_REGION = 'us-west-2'
 FAIRING_BACKEND = 'KubeflowAWSBackend'
 AWS_ACCOUNT_ID = fairing.cloud.aws.guess_account_id()
-BASE_DOCKER_IMAGE = 'tensorflow/tensorflow:1.15.0-py3'
+BASE_DOCKER_IMAGE = baseImage
 DOCKER_REGISTRY = '{}.dkr.ecr.{}.amazonaws.com'.format(AWS_ACCOUNT_ID, AWS_REGION)
 #S3_BUCKET = f'{HASH}-kubeflow-pipeline-data'
-S3_BUCKET = 'jzq1xn-eks-ml-data'
+S3_BUCKET = 'pjz16s-eks-ml-data'
 
 
 #NOTEBOOK_BASE_DIR = fairing.notebook.notebook_util.get_notebook_name()
 
-DATASET = 'data/train.csv'
+DATASET = dataDir
 REQUIREMENTS = 'requirements.txt'
 
 
