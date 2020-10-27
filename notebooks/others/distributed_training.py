@@ -4,10 +4,13 @@ import os
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-from tensorflow.examples.tutorials.mnist import mnist
+
+
+mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
 
 INPUT_DATA_DIR = '/tmp/tensorflow/mnist/input_data/'
+#INPPUT_DATA_DIR = '/tmp/data/'
 MAX_STEPS = 1000
 BATCH_SIZE = 100
 LEARNING_RATE = 0.3

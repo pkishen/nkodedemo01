@@ -89,3 +89,5 @@ class nkTrain(object):
         prediction = self.model.predict(data=X)
         # Do any postprocessing
         return prediction
+model = nkTrain()
+model.train()

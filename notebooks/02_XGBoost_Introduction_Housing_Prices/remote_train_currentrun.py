@@ -1,3 +1,4 @@
+from __future__ import division, print_function, absolute_import
 import argparse
 
 parser = argparse.ArgumentParser(description='Example with non-optional arguments')
@@ -5,10 +6,12 @@ parser = argparse.ArgumentParser(description='Example with non-optional argument
 parser.add_argument('method', action="store")
 parser.add_argument('dataDir', action="store")
 parser.add_argument('baseImage', action="store")
+parser.add_argument('entryPoint', action="store")
 args = parser.parse_args()
 method = args.method
 dataDir = args.dataDir
 baseImage = args.baseImage
+entryPoint = args.entryPoint
 print (parser.parse_args())
 import argparse
 import logging
@@ -101,8 +104,11 @@ class nkTrain(object):
         prediction = self.model.predict(data=X)
         # Do any postprocessing
         return prediction
+model = nkTrain()
+model.train()
 import random, string
 import os
+import logging
 import subprocess
 import importlib
 from kubeflow import fairing
@@ -116,6 +122,7 @@ BASE_DOCKER_IMAGE = baseImage
 DOCKER_REGISTRY = '{}.dkr.ecr.{}.amazonaws.com'.format(AWS_ACCOUNT_ID, AWS_REGION)
 #S3_BUCKET = f'{HASH}-kubeflow-pipeline-data'
 S3_BUCKET = 'pjz16s-eks-ml-data'
+ENTRY_POINT = entryPoint
 
 
 #NOTEBOOK_BASE_DIR = fairing.notebook.notebook_util.get_notebook_name()
@@ -134,10 +141,35 @@ if FAIRING_BACKEND == 'KubeflowAWSBackend':
 BackendClass = getattr(importlib.import_module('kubeflow.fairing.backends'), FAIRING_BACKEND)
 
 print("About to train job setup...")
+
 from kubeflow.fairing import TrainJob
-train_job = TrainJob(nkTrain, input_files=[DATASET,REQUIREMENTS],
+#train_job = TrainJob(str(ENTRY_POINT), input_files=[DATASET,REQUIREMENTS],
+#                     base_docker_image=BASE_DOCKER_IMAGE,
+#                     docker_registry=DOCKER_REGISTRY,
+#                     backend=BackendClass(build_context_source=BuildContext))
+
+print('ENTRY POINT for building image is :'+ ENTRY_POINT)
+
+
+if ENTRY_POINT == "nkTrain" :
+    print('Now in FUNCTION  or CLASS entrypoint. Entry point is set as '+ENTRY_POINT)
+    train_job = TrainJob(nkTrain, input_files=[DATASET,REQUIREMENTS],
                      base_docker_image=BASE_DOCKER_IMAGE,
                      docker_registry=DOCKER_REGISTRY,
                      backend=BackendClass(build_context_source=BuildContext))
+else :
+    print('Now in NON function or class entrypoint. Entry point is set as '+ENTRY_POINT)
+    train_job = TrainJob(str(ENTRY_POINT), input_files=[DATASET,REQUIREMENTS],
+                     base_docker_image=BASE_DOCKER_IMAGE,
+                     docker_registry=DOCKER_REGISTRY,
+                     backend=BackendClass(build_context_source=BuildContext))
+
+
+
+
 print("about to submit job")
-train_job.submit()
+
+outJob = train_job.submit()
+
+print ("Job to create image  is :  " + str(outJob))
+print("Successfully created Docker Image in the configured registry "+ DOCKER_REGISTRY)
